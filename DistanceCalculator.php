@@ -57,7 +57,8 @@ class DistanceCalculator {
 	 * @throw NotFoundException
 	 */
 	public function CalculateRouteDistance($startPoint, $endPoint) {
-
+		$isUnitInKm = $this->_unit === self::KM ? true : false;
+		return $this->_gMapsAdapter->GetRouteDistance($startPoint, $endPoint, $isUnitInKm);
 	}
 
 } 
