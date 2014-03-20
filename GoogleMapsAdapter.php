@@ -13,9 +13,14 @@ class GoogleMapsAdapter {
 	 * @return array format: ['lng': <longitude>, 'lat': <latitude>]
 	 */
 	public function GetGeoPosition($address) {
-		$addressURL = urlencode($address);
-		$apiKey = self::getAPIKeyForURL();
-		$decodedData = self::getDecodedData('http://maps.googleapis.com/maps/api/geocode/json?address=' . $addressURL . '&sensor=false' . $apiKey);
+		$GETParams = [
+			'address' => $address,
+			'sensor' => 'false'
+		];
+		if ($this->_apiKey != null) {
+			$GETParams['key'] = $this->_apiKey;
+		}
+		$decodedData = self::getDecodedData('http://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($GETParams));
 
 		self::checkReceivedDataEmptiness($decodedData);
 
@@ -26,19 +31,20 @@ class GoogleMapsAdapter {
 	 * @throw NotFoundException
 	 */
 	public function GetRouteDistance($startPoint, $endPoint, $distanceInKM = true) {
-		$startAddressURL = urlencode($startPoint);
-		$endAddressURL = urlencode($endPoint);
-		$units = $distanceInKM === true ? 'metric' : 'imprerial';
-		$apiKey = self::getAPIKeyForURL();
-		$decodedData = self::getDecodedData('http://maps.googleapis.com/maps/api/directions/json?origin=' . $startAddressURL . '&destination=' . $endAddressURL . '&units=' . $units . '&sensor=false' . $apiKey);
+		$GETParams = [
+			'origin' => $startPoint,
+		    'destination' => $endPoint,
+		    'units' => $distanceInKM === true ? 'metric' : 'imprerial',
+		    'sensor' => 'false'
+		];
+		if ($this->_apiKey != null) {
+			$GETParams['key'] = $this->_apiKey;
+		}
+		$decodedData = self::getDecodedData('http://maps.googleapis.com/maps/api/directions/json?' . http_build_query($GETParams));
 
 		self::checkReceivedDataEmptiness($decodedData);
 
 		return (double)$decodedData['routes'][0]['legs'][0]['distance']['text'];
-	}
-
-	protected function getAPIKeyForURL() {
-		return $this->_apiKey == null ? '' : '&key=' . $this->_apiKey;
 	}
 
 	protected function getDecodedData($url) {
