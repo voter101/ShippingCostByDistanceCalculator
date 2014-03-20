@@ -24,7 +24,7 @@ class ShippingCostByDistanceCalculator {
 		$this->_roundPrecision = (int)$roundPrecision;
 		$this->_maxDistance = (double)$maxDistance;
 
-		if ($distanceCalculator === null) {
+		if (!$distanceCalculator) {
 			$distanceCalculator = new DistanceCalculator(DistanceCalculator::KM);
 		}
 		$this->_distanceCalculator = $distanceCalculator;

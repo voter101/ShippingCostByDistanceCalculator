@@ -6,11 +6,15 @@ class DistanceCalculator {
 	const MI = 1;
 
 	private $_unit;
+	/**
+	 * @var GoogleMapsAdapter
+	 */
+	private $_gMapsAdapter;
 
 	/**
 	 * @throw InvalidArgumentException
 	 */
-	public function __construct($unit) {
+	public function __construct($unit, GoogleMapsAdapter $gMapsAdapter = null) {
 		switch ($unit) {
 			case self::KM:
 				break;
@@ -20,14 +24,19 @@ class DistanceCalculator {
 				throw new InvalidArgumentException("Given unit type isn't supported");
 		}
 		$this->_unit = $unit;
+
+		if (!$gMapsAdapter) {
+			$gMapsAdapter = new GoogleMapsCaller();
+		}
+		$this->_gMapsAdapter = $gMapsAdapter;
 	}
 
 	/**
 	 * @throw NotFoundException
 	 */
 	public function CalculateDistanceBetweenPoints($startPoint, $endPoint) {
-		$startGeoPosition = GoogleMapsCaller::GetGeoPosition($startPoint);
-		$endGeoPosition = GoogleMapsCaller::GetGeoPosition($endPoint);
+		$startGeoPosition = $this->_gMapsAdapter->GetGeoPosition($startPoint);
+		$endGeoPosition = $this->_gMapsAdapter->GetGeoPosition($endPoint);
 		return $this->calculateDistanceBetweenGeoPositions($startGeoPosition, $endGeoPosition);
 	}
 
