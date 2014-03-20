@@ -6,9 +6,6 @@ class DistanceCalculator {
 	const MI = 1;
 
 	private $_unit;
-	/**
-	 * @var GoogleMapsAdapter
-	 */
 	private $_gMapsAdapter;
 
 	/**
