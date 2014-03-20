@@ -22,7 +22,7 @@ class GoogleMapsAdapter {
 		}
 		$decodedData = self::getDecodedData('http://maps.googleapis.com/maps/api/geocode/json?' . http_build_query($GETParams));
 
-		self::checkReceivedDataEmptiness($decodedData);
+		$this->checkReceivedDataEmptiness($decodedData);
 
 		return $decodedData['results'][0]['geometry']['location'];
 	}
@@ -42,7 +42,7 @@ class GoogleMapsAdapter {
 		}
 		$decodedData = self::getDecodedData('http://maps.googleapis.com/maps/api/directions/json?' . http_build_query($GETParams));
 
-		self::checkReceivedDataEmptiness($decodedData);
+		$this->checkReceivedDataEmptiness($decodedData);
 
 		return (double)$decodedData['routes'][0]['legs'][0]['distance']['text'];
 	}
