@@ -15,7 +15,7 @@ class ShippingCostByDistanceCalculator {
 	private $_distanceCalculator;
 
 	/**
-	 * @param $maxDistance 0 means: don't check if distance is correct
+	 * @param $maxDistance        0 means: don't check if distance is correct
 	 * @param $distanceCalculator default distanceCalculator has KM units
 	 */
 	public function __construct($startingPoint, $ratePerUnit, $roundPrecision = 2, $maxDistance = 50, DistanceCalculator $distanceCalculator = null) {
@@ -34,12 +34,21 @@ class ShippingCostByDistanceCalculator {
 	 * @throw TooLongDistanceException
 	 * @throw NotFoundException
 	 */
-	public function CalculateCost($endPoint, $calculateRoute = true) {
-		if ($calculateRoute === true) {
-			$distance = $this->_distanceCalculator->CalculateRouteDistance($this->_startingPoint, $endPoint);
-		} else {
-			$distance = $this->_distanceCalculator->CalculateDistanceBetweenPoints($this->_startingPoint, $endPoint);
-		}
+	public function CalculateCostByRoute($endPoint, $calculateDistanceByRoute = true) {
+		$distance = $this->_distanceCalculator->CalculateRouteDistance($this->_startingPoint, $endPoint);
+		return $this->calculateCost($distance);
+	}
+
+	/**
+	 * @throw TooLongDistanceException
+	 * @throw NotFoundException
+	 */
+	public function CalculateCostBetweenPoints($endPoint, $calculateDistanceByRoute = true) {
+		$distance = $this->_distanceCalculator->CalculateDistanceBetweenPoints($this->_startingPoint, $endPoint);
+		return $this->calculateCost($distance);
+	}
+
+	private function calculateCost($distance) {
 		if (!$this->isResultInCorrectRange($distance)) {
 			throw new TooLongDistanceException("Result distance is out of specified range");
 		}
@@ -51,11 +60,13 @@ class ShippingCostByDistanceCalculator {
 		if ($this->_maxDistance == 0) {
 			return true;
 		}
+
 		return $result <= $this->_maxDistance;
 	}
 
 	private function calculatePrice($distance) {
 		$price = $distance * $this->_ratePerUnit;
+
 		return round($price, $this->_roundPrecision);
 	}
 
