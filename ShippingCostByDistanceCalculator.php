@@ -49,19 +49,16 @@ class ShippingCostByDistanceCalculator {
 	}
 
 	private function calculateCost($distance) {
-		if (!$this->isResultInCorrectRange($distance)) {
-			throw new TooLongDistanceException("Result distance is out of specified range");
-		}
-
+		$this->validateDistance($distance);
 		return $this->calculatePrice($distance);
 	}
 
-	private function isResultInCorrectRange($result) {
-		if ($this->_maxDistance == 0) {
-			return true;
+	private function validateDistance($result) {
+		if ($this->_maxDistance != 0) {
+			if ($result > $this->_maxDistance) {
+				throw new TooLongDistanceException("Result distance is out of specified range");
+			}
 		}
-
-		return $result <= $this->_maxDistance;
 	}
 
 	private function calculatePrice($distance) {
